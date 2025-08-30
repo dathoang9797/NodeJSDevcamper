@@ -1,0 +1,36 @@
+{
+  "name": "DevCamper",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.ts",
+  "scripts": {
+    "start:window": "set \"NODE_ENV=production\" && node index.ts",
+    "start:unix": "NODE_ENV=production node index.ts",
+    "dev": "nodemon index.ts",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "devDependencies": {
+    "@types/express": "^5.0.3",
+    "@types/morgan": "^1.9.10",
+    "@types/node": "^24.3.0",
+    "nodemon": "3.1.10"
+  },
+  "compilerOptions": {
+    "target": "es6",
+    "module": "module"
+  },
+  "exclude": [
+    "node_modules"
+  ],
+  "dependencies": {
+    "dotenv": "^17.2.1",
+    "express": "^5.1.0",
+    "helmet": "^8.1.0",
+    "morgan": "^1.10.1",
+    "ora": "^8.2.0"
+  }
+}

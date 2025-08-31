@@ -1,17 +1,17 @@
 import express from 'express';
-import dotenv from 'dotenv';
-import morgan from 'morgan';
 import routerBootcamps from "#src/routers/bootcamps.ts";
-
-dotenv.config({ path: './config/config.env' });
+import morgan from 'morgan';
+// import "#src/config/db.ts";
 
 const app = express();
 const port = process.env.PORT || 3000;
 
-app.use("/api/v1/bootcamps", routerBootcamps);
+//Dev logging middleware
+if (process.env.NODE_ENV === "development") {
+    app.use(morgan("dev"));
+}
 
-app.use(express.json());
-app.use(morgan("dev"));
+app.use("/api/v1/bootcamps", routerBootcamps);
 
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);

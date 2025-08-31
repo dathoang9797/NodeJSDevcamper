@@ -1,0 +1,28 @@
+services:
+  mongo:
+    image: mongo:7
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: secret
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+  api:
+    build:
+      context: .
+    environment:
+      PORT: ${PORT:-3000}
+      NODE_ENV: development
+      MONGO_URL: ${MONGO_URL:-mongodb://root:secret@mongo:27017/dev?authSource=admin}
+    ports:
+      - "${PORT:-3000}:${PORT:-3000}"
+    volumes:
+      - ./:/usr/src/app
+      - /usr/src/app/node_modules
+    depends_on: [mongo]
+    command: npm run dev
+
+volumes:
+  mongo_data: {}

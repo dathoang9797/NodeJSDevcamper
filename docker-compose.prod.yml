@@ -4,26 +4,26 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: secret
-    ports:
-      - "27017:27017"
     volumes:
       - mongo_data:/data/db
 
   api:
     build:
       context: .
-      target: dev  
+      target: runner              
     environment:
       PORT: ${PORT:-3000}
-      NODE_ENV: development
-      MONGO_URL: ${MONGO_URL:-mongodb://root:secret@mongo:27017/dev?authSource=admin}
+      NODE_ENV: production
+      MONGO_URL: ${MONGO_URL:-mongodb://root:secret@mongo:27017/devcamper?authSource=admin}
     ports:
       - "${PORT:-3000}:${PORT:-3000}"
+    depends_on: [mongo]
+    restart: unless-stopped       # tự khởi động lại nếu crash
+    # ❌ KHÔNG bind mount code, KHÔNG dùng npm run dev
     volumes:
       - ./:/app
       - /app/node_modules
-    depends_on: [mongo]
-    command: npm run dev
+    command: npm run start            # dùng CMD của image
 
 volumes:
   mongo_data: {}

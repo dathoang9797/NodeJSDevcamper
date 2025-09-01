@@ -8,12 +8,5 @@
       "options": { "cwd": "${workspaceFolder}" },
       "problemMatcher": []
     },
-    {
-      "label": "docker: compose down",
-      "type": "shell",
-      "command": "docker compose down",
-      "options": { "cwd": "${workspaceFolder}" },
-      "problemMatcher": []
-    }
   ]
 }

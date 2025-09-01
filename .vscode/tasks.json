@@ -8,5 +8,12 @@
       "options": { "cwd": "${workspaceFolder}" },
       "problemMatcher": []
     },
+    {
+      "label": "docker: compose stop",
+      "type": "shell",
+      "command": "docker compose stop",
+      "options": { "cwd": "${workspaceFolder}" },
+      "problemMatcher": []
+    }
   ]
 }

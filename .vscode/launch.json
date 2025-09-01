@@ -42,7 +42,6 @@
                 "<node_internals>/**"
             ],
             "preLaunchTask": "docker: compose up",
-            "postDebugTask": "docker: compose down"
         }
     ]
 }

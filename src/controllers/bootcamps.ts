@@ -1,4 +1,5 @@
 import type { Request, Response, NextFunction } from "express";
+import bootcamp from "#src/models/bootcamp.ts";
 
 const getBootcamps = (req: Request, res: Response, next: NextFunction) => {
     res.status(200).json({ success: true, message: "Show all bootcamps" });
@@ -9,6 +10,7 @@ const getBootcamp = (req: Request, res: Response, next: NextFunction) => {
 };
 
 const createBootcamp = (req: Request, res: Response, next: NextFunction) => {
+    console.log(req.body)
     res.status(201).json({ success: true, message: "Create new bootcamp" });
 };
 

@@ -1,29 +1,30 @@
-services:
-  mongo:
-    image: mongo:7
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: secret
+services:                                  # Nhóm dịch vụ
+  mongo:                                   # MongoDB
+    image: mongo:7                         # Image Mongo v7
+    environment:                           # Biến môi trường khởi tạo
+      MONGO_INITDB_ROOT_USERNAME: root     # User root
+      MONGO_INITDB_ROOT_PASSWORD: secret   # Mật khẩu root
     ports:
-      - "27017:27017"
+      - "27017:27017"                      # Mở cổng 27017 ra host
     volumes:
-      - mongo_data:/data/db
+      - mongo_data:/data/db                # Lưu dữ liệu Mongo vào named volume
 
-  api:
+  api:                                     # Ứng dụng Node.js
     build:
-      context: .
-      target: dev  
+      context: .                           # Build từ thư mục hiện tại
+      target: dev                          # Dùng stage "dev" trong Dockerfile
     environment:
-      PORT: ${PORT:-3000}
-      NODE_ENV: development
-      MONGO_URL: ${MONGO_URL:-mongodb://root:secret@mongo:27017/dev?authSource=admin}
+      PORT: ${PORT:-3000}                  # Port của app (mặc định 3000)
+      NODE_ENV: development                # Chế độ development
+      MONGO_URL: ${MONGO_URL:-mongodb://root:secret@mongo:27017/dev?authSource=admin}  # Kết nối Mongo qua service "mongo"
     ports:
-      - "${PORT:-3000}:${PORT:-3000}"
+      - "${PORT:-3000}:${PORT:-3000}"      # Map cổng host:container
+      - "9229:9229"
     volumes:
-      - ./:/app
-      - /app/node_modules
-    depends_on: [mongo]
-    command: npm run dev
+      - ./:/app                            # Bind mã nguồn host vào /app (hot-reload)
+      - /app/node_modules                  # Anonymous volume giữ node_modules không bị bind đè
+    depends_on: [mongo]                    # Khởi động sau mongo (chỉ đảm bảo thứ tự)
+    command: npm run dev                   # Lệnh chạy dev (ví dụ nodemon)
 
 volumes:
-  mongo_data: {}
+  mongo_data: {}                           # Khai báo named volume cho Mongo

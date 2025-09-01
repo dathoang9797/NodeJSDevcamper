@@ -5,13 +5,13 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Launch Program",
             "type": "node",
             "request": "launch",
-            "name": "Launch Program",
             "skipFiles": [
                 "<node_internals>/**"
             ],
-            "program": "${workspaceFolder}\\index.ts",
+            "program": "${workspaceFolder}\\src\\app.ts",
             "outFiles": [
                 "${workspaceFolder}/**/*.js"
             ]
@@ -20,7 +20,7 @@
             "name": "CLI: note list",
             "type": "node",
             "request": "launch",
-            "program": "${workspaceFolder}/bin/note.ts", // hoặc note.ts nếu dùng tsx
+            "program": "${workspaceFolder}/bin/note.ts",
             "args": [
                 "list"
             ],
@@ -29,6 +29,21 @@
             "skipFiles": [
                 "<node_internals>/**"
             ]
+        },
+        {
+            "name": "Attach to Node in Docker",
+            "type": "node",
+            "request": "attach",
+            "address": "localhost",
+            "port": 9229,
+            "localRoot": "${workspaceFolder}",
+            "remoteRoot": "/app",
+            "restart": true,
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "preLaunchTask": "docker: compose up",
+            "postDebugTask": "docker: compose down"
         }
     ]
 }

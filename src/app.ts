@@ -11,12 +11,12 @@ if (process.env.NODE_ENV === "development") {
     app.use(morgan("dev"));
 }
 
+app.use(express.json());
 app.use("/api/v1/bootcamps", routerBootcamps);
 
 const server = app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 });
-
 
 process.on("unhandledRejection", (err: Error) => {
     console.error(`Unhandled Rejection: ${err.message}`);

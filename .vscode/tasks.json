@@ -4,27 +4,20 @@
     {
       "label": "docker: compose up",
       "type": "shell",
-      "command": "docker compose up -d && docker compose logs -f api",
+      "command": "docker compose up",
       "options": {
         "cwd": "${workspaceFolder}"
       },
       "isBackground": true,
-      "presentation": {
-        "reveal": "always",
-        "panel": "dedicated",
-        "focus": false
-      },
       "problemMatcher": {
         "owner": "custom",
         "pattern": {
-          "regexp": "^(.*)$", // 1 group
-          "file": 1, // chỉ để thỏa yêu cầu cấu trúc
-          "message": 1
+          "regexp": "."
         },
         "background": {
           "activeOnStart": true,
-          "beginsPattern": ".+",
-          "endsPattern": "Debugger listening|Server running|Listening on|Ready"
+          "beginsPattern": ".",
+          "endsPattern": ".*"
         }
       }
     },

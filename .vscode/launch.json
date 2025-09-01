@@ -31,7 +31,7 @@
             ]
         },
         {
-            "name": "Attach to Node in Docker",
+            "name": "Debug NodeJs Container",
             "type": "node",
             "request": "attach",
             "port": 9229,
@@ -42,7 +42,7 @@
                 "<node_internals>/**"
             ],
             "preLaunchTask": "docker: compose up",
-            "postDebugTask": "docker: compose stop"
+            "postDebugTask": "docker: compose stop",
         }
     ]
 }

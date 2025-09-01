@@ -4,7 +4,7 @@
     {
       "label": "docker: compose up",
       "type": "shell",
-      "command": "docker compose up",
+      "command": "docker compose up -d && docker compose logs -f --since=1s --tail=200 api",
       "options": {
         "cwd": "${workspaceFolder}"
       },

@@ -22,7 +22,6 @@ services:
     # ❌ KHÔNG bind mount code, KHÔNG dùng npm run dev
     volumes:
       - ./:/app
-      - /app/node_modules
     command: npm run start            # dùng CMD của image
 
 volumes:

@@ -22,7 +22,6 @@ services:                                  # Nhóm dịch vụ
       - "9229:9229"
     volumes:
       - ./:/app                            # Bind mã nguồn host vào /app (hot-reload)
-      - /app/node_modules                  # Anonymous volume giữ node_modules không bị bind đè
     depends_on: [mongo]                    # Khởi động sau mongo (chỉ đảm bảo thứ tự)
     command: npm run dev                   # Lệnh chạy dev (ví dụ nodemon)
 

@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import slugify from 'slugify';
+import { GetLatLngByAddress } from '@geocoder-free/google';
 
 const BootcampSchema = new mongoose.Schema({
     name: {
@@ -109,6 +110,22 @@ const BootcampSchema = new mongoose.Schema({
 BootcampSchema.pre('save', function (next) {
     console.log("Slugifying bootcamp name...");
     this.slug = slugify.default(this.name, { lower: true, strict: true });
+    next();
+});
+
+BootcampSchema.pre('save', async function (next) {
+    const location = await GetLatLngByAddress(this.address);
+    console.log({ location })
+    this.location = {
+        type: 'Point',
+        coordinates: [location[0], location[1]],
+        formattedAddress: this.address,
+        street: '123 Main St',
+        city: 'Anytown',
+        state: 'CA',
+        zipcode: '12345',
+        country: 'USA'
+    };
     next();
 });
 

@@ -41,7 +41,7 @@
             "skipFiles": [
                 "<node_internals>/**"
             ],
-            "preLaunchTask": "docker: compose up",
+            "preLaunchTask": "docker: dev",
             "postDebugTask": "docker: compose stop",
         }
     ]

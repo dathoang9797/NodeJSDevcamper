@@ -2,7 +2,7 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "docker: compose up",
+      "label": "docker: dev",
       "type": "shell",
       "command": "docker compose up -d && docker compose logs -f --since=1s --tail=200 api",
       "options": {

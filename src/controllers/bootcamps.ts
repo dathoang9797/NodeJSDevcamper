@@ -5,11 +5,30 @@ import asyncHandler from "#src/middleware/async.ts";
 // import { GetLatLngByAddress } from "@geocoder-free/google";
 
 const getBootcamps = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
-    let queryStr = JSON.stringify(req.query);
+    const reqQuery = { ...req.query };
+    const excludedFields = ['select', 'sort', 'page', 'limit'];
+    excludedFields.forEach((field) => delete reqQuery[field]);
+
+    let queryStr = JSON.stringify(reqQuery);
     queryStr = queryStr.replace(/\b(gt|gte|lt|lte|in)\b/g, (match) => `$${match}`);
     let queryParse = JSON.parse(queryStr);
 
-    const bootcamps = await Bootcamp.find(queryParse);
+    let query = Bootcamp.find(queryParse);
+    if (req.query.select) {
+        const select = req.query.select as string;
+        const fields = select.split(",").join(' ');
+        query = query.select(fields);
+    }
+
+    if (req.query.sort) {
+        const sortBy = req.query.sort as string;
+        const fields = sortBy.split(",").join(' ');
+        query = query.sort(fields);
+    } else {
+        query = query.sort('-createdAt');
+    }
+
+    const bootcamps = await query;
     res.status(200).json({ success: true, data: bootcamps });
 });
 

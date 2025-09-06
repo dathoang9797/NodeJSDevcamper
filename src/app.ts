@@ -1,8 +1,9 @@
 import express from 'express';
 import routerBootcamps from "#src/routers/bootcamps.ts";
+import routerCourses from "#src/routers/courses.ts";
 import morgan from 'morgan';
 import errorHandler from './middleware/error.ts';
-import geocoder from 'node-geocoder';
+// import geocoder from 'node-geocoder';
 import "#src/config/index.ts";
 
 const app = express();
@@ -16,6 +17,7 @@ if (process.env.NODE_ENV === "development") {
 app.set('query parser', 'extended');
 app.use(express.json());
 app.use("/api/v1/bootcamps", routerBootcamps);
+app.use("/api/v1/courses", routerCourses);
 app.use(errorHandler);
 
 const server = app.listen(port, () => {

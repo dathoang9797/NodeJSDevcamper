@@ -13,7 +13,7 @@ const getBootcamps = asyncHandler(async (req: Request, res: Response, next: Next
     queryStr = queryStr.replace(/\b(gt|gte|lt|lte|in)\b/g, (match) => `$${match}`);
     let queryParse = JSON.parse(queryStr);
 
-    let query = Bootcamp.find(queryParse);
+    let query = Bootcamp.find(queryParse).populate('courses');
     if (req.query.select) {
         const select = req.query.select as string;
         const fields = select.split(",").join(' ');
@@ -28,8 +28,29 @@ const getBootcamps = asyncHandler(async (req: Request, res: Response, next: Next
         query = query.sort('-createdAt');
     }
 
+    const page = parseInt(req.query.page as string, 10) || 1;
+    const limit = parseInt(req.query.limit as string, 10) || 1;
+    const startIndex = (page - 1) * limit;
+    const endIndex = page * limit;
+    const total = await Bootcamp.countDocuments(queryParse);
+    query = query.skip(startIndex).limit(limit);
+
+    const pagination = { next: null, prev: null };
+    if (endIndex < total) {
+        pagination.next = {
+            page: page + 1,
+            limit
+        };
+    }
+    if (startIndex > 0) {
+        pagination.prev = {
+            page: page - 1,
+            limit
+        };
+    }
+
     const bootcamps = await query;
-    res.status(200).json({ success: true, data: bootcamps });
+    res.status(200).json({ success: true, data: bootcamps, pagination });
 });
 
 const getBootcamp = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {

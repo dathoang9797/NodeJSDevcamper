@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 import colors from 'colors';
 import bootcamp from './models/bootcamp.ts';
+import course from './models/course.ts';
 import mongoose from "mongoose";
 import dotenv from 'dotenv';
 
@@ -18,13 +19,16 @@ const connectDB = async () => {
 
 export default connectDB();
 
-
 const bootcampsJson = fs.readFileSync(new URL('./data/bootcamps.json', import.meta.url), 'utf-8');
 const bootcamps = JSON.parse(bootcampsJson);
+
+const coursesJson = fs.readFileSync(new URL('./data/courses.json', import.meta.url), 'utf-8');
+const courses = JSON.parse(coursesJson);
 
 const importData = async () => {
     try {
         await bootcamp.create(bootcamps);
+        await course.create(courses);
         console.log(colors.green('Data imported successfully'));
         process.exit();
     } catch (error) {
@@ -35,6 +39,7 @@ const importData = async () => {
 const deleteData = async () => {
     try {
         await bootcamp.deleteMany();
+        await course.deleteMany();
         console.log(colors.red('Data deleted successfully'));
         process.exit();
     } catch (error) {

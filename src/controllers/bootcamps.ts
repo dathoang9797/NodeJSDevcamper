@@ -1,4 +1,6 @@
 import type { Request, Response, NextFunction } from "express";
+import type { UploadedFile } from "express-fileupload";
+import path from 'path';
 import Bootcamp from "#src/models/bootcamp.ts";
 import ErrorResponse from "#src/utils/errorResponse.ts";
 import asyncHandler from "#src/middleware/async.ts";
@@ -103,11 +105,42 @@ const deleteBootcamp = asyncHandler(async (req: Request, res: Response, next: Ne
 // res.status(200).json({ success: true, data: bootcamps });
 // });
 
+export const uploadImage = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+    const bootcamp = await Bootcamp.findById(req.params.id);
+    if (!bootcamp) {
+        return next(new ErrorResponse(`Bootcamp not found with id of ${req.params.id}`, 404));
+    }
+
+    if (!req.files) {
+        return next(new ErrorResponse(`Please upload a file`, 400));
+    }
+    const file = req.files.file as UploadedFile;
+
+    if (!file.mimetype.startsWith('image')) {
+        return next(new ErrorResponse(`Please upload an image file`, 400));
+    }
+
+    if (file.size > parseInt(process.env.MAX_FILE_UPLOAD, 10)) {
+        return next(new ErrorResponse(`Please upload an image file less than ${process.env.MAX_FILE_UPLOAD}`, 400));
+    }
+
+    file.name = `photo_${bootcamp._id}${path.parse(file.name).ext}`;
+    file.mv(`${process.env.FILE_UPLOAD_PATH}/${file.name}`, async (err) => {
+        if (err) {
+            return next(new ErrorResponse(`Problem with file upload`, 500));
+        }
+
+        await Bootcamp.findByIdAndUpdate(req.params.id, { photo: file.name });
+        res.status(200).json({ success: true, data: file.name });
+    });
+});
+
 export const bootcampController = {
     getBootcamps,
     getBootcamp,
     createBootcamp,
     updateBootcamp,
     deleteBootcamp,
+    uploadImage
     // getBootcampsInRadius
 }

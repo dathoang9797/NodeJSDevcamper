@@ -8,6 +8,9 @@ router
     .get('/', courseController.getCourses)
     .post('/', courseController.createCourse);
 
-router.get('/:id', courseController.getCourse);
+router.route('/:id')
+    .get(courseController.getCourse)
+    .put(courseController.updateCourse)
+    .delete(courseController.deleteCourse);
 
 export default router;

@@ -1,8 +1,10 @@
 import express from 'express';
+import path from 'path';
 import routerBootcamps from "#src/routers/bootcamps.ts";
 import routerCourses from "#src/routers/courses.ts";
 import morgan from 'morgan';
 import errorHandler from './middleware/error.ts';
+import fileUpload from 'express-fileupload';
 // import geocoder from 'node-geocoder';
 import "#src/config/index.ts";
 
@@ -13,6 +15,12 @@ const port = process.env.PORT || 3000;
 if (process.env.NODE_ENV === "development") {
     app.use(morgan("dev"));
 }
+
+//File uploading
+app.use(fileUpload());
+
+//static folder
+app.use(express.static(path.join(process.cwd(), 'public')));
 
 app.set('query parser', 'extended');
 app.use(express.json());

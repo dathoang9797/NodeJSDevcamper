@@ -40,12 +40,13 @@ const deleteData = async () => {
     try {
         await bootcamp.deleteMany();
         await course.deleteMany();
-        console.log(colors.red('Data deleted successfully'));
+        console.log(colors.green('Data deleted successfully'));
         process.exit();
     } catch (error) {
         console.error(colors.red(error.message));
     }
 };
+
 if (process.argv[2] === "-i") {
     importData();
 } else if (process.argv[2] === "-d") {

@@ -43,8 +43,31 @@ const createCourse = asyncHandler(async (req: Request, res: Response, next: Next
     res.status(201).json({ success: true, data: course });
 });
 
+const updateCourse = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+    const course = await Course.findByIdAndUpdate(req.params.id, req.body, {
+        new: true,
+        runValidators: true
+    });
+
+    if (!course) {
+        return next(new ErrorResponse(`No course found with id of ${req.params.id}`, 404));
+    }
+
+    res.status(200).json({ success: true, data: course });
+});
+
+const deleteCourse = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+    const course = await Course.findByIdAndDelete(req.params.id);
+    if (!course) {
+        return next(new ErrorResponse(`No course found with id of ${req.params.id}`, 404));
+    }
+    res.status(200).json({ success: true, data: {} });
+});
+
 export const courseController = {
     getCourses,
     getCourse,
-    createCourse
-}
+    createCourse,
+    updateCourse,
+    deleteCourse
+};

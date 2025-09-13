@@ -2,10 +2,11 @@ import express from 'express';
 import path from 'path';
 import routerBootcamps from "#src/routers/bootcamps.ts";
 import routerCourses from "#src/routers/courses.ts";
+import routerAuth from "#src/routers/auth.ts";
 import morgan from 'morgan';
 import errorHandler from './middleware/error.ts';
 import fileUpload from 'express-fileupload';
-// import geocoder from 'node-geocoder';
+import cookieParser from 'cookie-parser';
 import "#src/config/index.ts";
 
 const app = express();
@@ -23,9 +24,16 @@ app.use(fileUpload());
 app.use(express.static(path.join(process.cwd(), 'public')));
 
 app.set('query parser', 'extended');
+
+//Body parser
 app.use(express.json());
+
+//Cookie parser
+app.use(cookieParser());
+
 app.use("/api/v1/bootcamps", routerBootcamps);
 app.use("/api/v1/courses", routerCourses);
+app.use("/api/v1/auth", routerAuth);
 app.use(errorHandler);
 
 const server = app.listen(port, () => {

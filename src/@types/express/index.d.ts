@@ -1,4 +1,5 @@
-// Extend Express Response type to include advancedResults
+import IUser from '#src/models/user.ts';
+
 declare global {
     namespace Express {
         interface Response {
@@ -8,6 +9,9 @@ declare global {
                 pagination: { next: any; prev: any };
                 data: any;
             };
+        }
+        interface Request {
+            user?: IUser;
         }
     }
 }

@@ -3,6 +3,12 @@ import { bootcampController } from '#src/controllers/bootcamps.ts';
 import course from '#src/routers/courses.ts';
 import { advancedResults } from '#src/middleware/advancedResult.ts';
 import bootcamp from '#src/models/bootcamp.ts';
+import { protect } from '#src/middleware/auth.ts';
+
+const {
+    getBootcamps, getBootcamp, createBootcamp, updateBootcamp,
+    deleteBootcamp, uploadImage
+} = bootcampController;
 
 const router = express.Router();
 
@@ -10,16 +16,16 @@ const router = express.Router();
 router.use("/:bootcampId/courses", course);
 
 router.route("/")
-    .get(advancedResults(bootcamp, 'courses'), bootcampController.getBootcamps)
-    .post(bootcampController.createBootcamp);
+    .get(advancedResults(bootcamp, 'courses'), getBootcamps)
+    .post(protect, createBootcamp);
 
 router.route("/:id")
-    .get(bootcampController.getBootcamp)
-    .put(bootcampController.updateBootcamp)
-    .delete(bootcampController.deleteBootcamp);
+    .get(getBootcamp)
+    .put(protect, updateBootcamp)
+    .delete(protect, deleteBootcamp);
 
 router.route("/:id/photo")
-    .put(bootcampController.uploadImage);
+    .put(uploadImage);
 
 // router.route("/radius/:zipcode/:distance")
 //     .get(bootcampController.getBootcampsInRadius);

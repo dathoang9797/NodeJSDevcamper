@@ -16,11 +16,14 @@ const errorHandler = (err: ErrorResponse, req: Request, res: Response, next: Nex
     }
 
     if (err.name === "ValidationError") {
-        const message = Object.values(err.value).map((val: any) => val.message).join(", ");
+        const message = err.message;
         err = new ErrorResponse(message, 400);
     }
 
-    res.status(err.statusCode || 500).send(err.message || 'Something broke!');
+    res.status(err.statusCode || 500).json({
+        success: false,
+        error: err.message || 'Something broke!'
+    });
 };
 
 export default errorHandler;

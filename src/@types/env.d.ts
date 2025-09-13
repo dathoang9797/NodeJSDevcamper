@@ -4,5 +4,10 @@ declare namespace NodeJS {
         NODE_ENV: 'development' | 'test' | 'production' | 'staging';
         MONGO_URI: string;
         PORT?: `${number}`;
+        JWT_EXPIRE: string;
+        JWT_SECRET: string;
+        JWT_COOKIE_EXPIRE: string;
+        FILE_UPLOAD_PATH: string;
+        MAX_FILE_UPLOAD: string;
     }
 }

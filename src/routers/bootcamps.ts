@@ -3,7 +3,7 @@ import { bootcampController } from '#src/controllers/bootcamps.ts';
 import course from '#src/routers/courses.ts';
 import { advancedResults } from '#src/middleware/advancedResult.ts';
 import bootcamp from '#src/models/bootcamp.ts';
-import { protect } from '#src/middleware/auth.ts';
+import { protect, authorized } from '#src/middleware/auth.ts';
 
 const {
     getBootcamps, getBootcamp, createBootcamp, updateBootcamp,
@@ -17,15 +17,15 @@ router.use("/:bootcampId/courses", course);
 
 router.route("/")
     .get(advancedResults(bootcamp, 'courses'), getBootcamps)
-    .post(protect, createBootcamp);
+    .post(protect, authorized("publisher", "admin"), createBootcamp);
 
 router.route("/:id")
     .get(getBootcamp)
-    .put(protect, updateBootcamp)
-    .delete(protect, deleteBootcamp);
+    .put(protect, authorized("publisher", "admin"), updateBootcamp)
+    .delete(protect, authorized("publisher", "admin"), deleteBootcamp);
 
 router.route("/:id/photo")
-    .put(uploadImage);
+    .put(protect, authorized("publisher", "admin"), uploadImage);
 
 // router.route("/radius/:zipcode/:distance")
 //     .get(bootcampController.getBootcampsInRadius);

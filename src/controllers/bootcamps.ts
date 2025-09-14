@@ -115,7 +115,14 @@ export const uploadImage = asyncHandler(async (req: Request, res: Response, next
             return next(new ErrorResponse(`Problem with file upload`, 500));
         }
 
-        await Bootcamp.findByIdAndUpdate(req.params.id, { photo: file.name });
+        const filter = { _id: req.params.id } as any;
+        if (req.user.role !== 'admin')
+            filter.user = req.user.id;
+
+        const bootcamp = await Bootcamp.findOneAndUpdate(filter, { photo: file.name });
+        if (!bootcamp) {
+            return next(new ErrorResponse(`User ${req.user.id} is not authorized to update this bootcamp`, 401));
+        }
         res.status(200).json({ success: true, data: file.name });
     });
 });

@@ -10,6 +10,7 @@ interface ICourse extends Document {
     scholarshipAvailable: boolean;
     createdAt: Date;
     bootcamp: Types.ObjectId;
+    user: Types.ObjectId;
 }
 interface ICourseModel extends Model<ICourse> {
     getAverageCost: Function
@@ -53,6 +54,11 @@ const CourseSchema = new mongoose.Schema<ICourse, ICourseModel>({
         type: mongoose.Schema.Types.ObjectId,
         ref: "Bootcamp",
         required: [true, "Please add a bootcamp"]
+    },
+    user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        required: [true, "Please add a user"]
     },
 });
 

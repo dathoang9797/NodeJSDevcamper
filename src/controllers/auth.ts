@@ -35,6 +35,19 @@ const GetMe = asyncHandler(async (req: Request, res: Response, next: NextFunctio
     res.status(200).json({ success: true, data: user });
 });
 
+const ForgotPassword = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+    const user = await User.findOne({ email: req.body.email });
+    if (!user) {
+        return next(new ErrorResponse("There is no user with that email", 404));
+    }
+    //Get reset token
+    const resetToken = user.getResetPasswordToken();
+    await user.save({ validateBeforeSave: false });
+
+    res.status(200).json({ success: true, data: user });
+});
+
+
 //Get Token From model, create cookie and send response
 const sendTokenResponse = (user: any, statusCode: number, res: Response) => {
     const token = user.getSignedJwtToken();
@@ -53,4 +66,4 @@ const sendTokenResponse = (user: any, statusCode: number, res: Response) => {
         .json({ success: true, data: user, token });
 };
 
-export const authController = { Register, Login, GetMe };
+export const authController = { Register, Login, GetMe, ForgotPassword };

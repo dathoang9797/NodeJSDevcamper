@@ -1,6 +1,7 @@
 import bcrypt from "bcryptjs";
 import mongoose, { Model, Schema } from "mongoose";
 import jwt from "jsonwebtoken";
+import crypto from "node:crypto";
 
 export interface IUser extends Document {
     id: string;
@@ -9,7 +10,7 @@ export interface IUser extends Document {
     role: string;
     password: string;
     resetPasswordToken: string;
-    resetPasswordExpire: Date;
+    resetPasswordExpire: Date | number;
     createAt: Date;
 }
 
@@ -20,6 +21,7 @@ export interface IUserModel extends Model<IUser> {
 interface IUserMethods {
     getSignedJwtToken(): string;
     matchPassword(enteredPassword: string): Promise<boolean>;
+    getResetPasswordToken(): string;
 }
 
 const UserSchema = new Schema<IUser, IUserModel, IUserMethods>(
@@ -63,10 +65,24 @@ const UserSchema = new Schema<IUser, IUserModel, IUserMethods>(
                 const expiresIn = (process.env.JWT_EXPIRE || "30d") as jwt.SignOptions["expiresIn"];
                 return jwt.sign({ id: this._id }, secret, { expiresIn });
             },
-
             async matchPassword(enteredPassword: string) {
                 const isMatch = await bcrypt.compare(enteredPassword, this.password);
                 return isMatch;
+            },
+            getResetPasswordToken() {
+                //Generate token
+                const resetToken = crypto.randomBytes(20).toString("hex");
+
+                //Hash token and set to resetPasswordToken field
+                this.resetPasswordToken = crypto
+                    .createHash("sha256")
+                    .update(resetToken)
+                    .digest("hex");
+
+                //Set expire
+                this.resetPasswordExpire = Date.now() + 10 * 60 * 1000; // 10 minutes
+
+                return resetToken;
             }
         },
         statics: {

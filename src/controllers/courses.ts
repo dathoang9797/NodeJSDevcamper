@@ -30,42 +30,66 @@ const getCourse = asyncHandler(async (req: Request, res: Response, next: NextFun
     res.status(200).json({ success: true, data: course });
 });
 
-const createCourse = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+const addCourse = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
     req.body.bootcamp = req.params.bootcampId;
+    req.body.user = req.user.id;
     const bootcamp = await Bootcamp.findById(req.params.bootcampId);
     if (!bootcamp) {
         return next(new ErrorResponse(`No bootcamp found with id of ${req.params.bootcampId}`, 404));
     }
 
-    const course = await Course.create(req.body);
-    res.status(201).json({ success: true, data: course });
+    if (bootcamp.user.toString() !== req.user.id && req.user.role !== 'admin') {
+        return next(new ErrorResponse(`User ${req.user.id} is not authorized to add a course to bootcamp ${bootcamp._id}`, 401));
+    }
+
+    const newCourse = await Course.create(req.body);
+    res.status(201).json({ success: true, data: newCourse });
 });
 
 const updateCourse = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
-    const course = await Course.findByIdAndUpdate(req.params.id, req.body, {
+    let course = await Course.findById(req.params.id);
+    if (!course) {
+        return next(new ErrorResponse(`No course found with id of ${req.params.id}`, 404));
+    }
+
+    let filter = { _id: req.params.id } as any;
+    if (req.user.role !== 'admin')
+        filter.user = req.user.id;
+
+    course = await Course.findOneAndUpdate(filter, req.body, {
         new: true,
         runValidators: true
     });
 
     if (!course) {
-        return next(new ErrorResponse(`No course found with id of ${req.params.id}`, 404));
+        return next(new ErrorResponse(`User ${req.user.id} is not authorized to update this course`, 401));
     }
 
     res.status(200).json({ success: true, data: course });
 });
 
 const deleteCourse = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
-    const course = await Course.findByIdAndDelete(req.params.id);
+    const course = await Course.findById(req.params.id);
     if (!course) {
         return next(new ErrorResponse(`No course found with id of ${req.params.id}`, 404));
     }
+
+    let filter = { _id: req.params.id } as any;
+    if (req.user.role !== 'admin')
+        filter.user = req.user.id;
+
+    const deletedCourse = await Course.findOneAndDelete(filter);
+    if (!deletedCourse) {
+        return next(new ErrorResponse(`User ${req.user.id} is not authorized to delete this course`, 401));
+    }
+
     res.status(200).json({ success: true, data: {} });
 });
 
 export const courseController = {
     getCourses,
     getCourse,
-    createCourse,
+    addCourse,
     updateCourse,
     deleteCourse
 };

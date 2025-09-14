@@ -103,7 +103,12 @@ const BootcampSchema = new mongoose.Schema({
     updatedAt: {
         type: Date,
         default: Date.now
-    }
+    },
+    user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        required: [true, "Please add a user"]
+    },
 }, {
     toJSON: { virtuals: true },
     toObject: { virtuals: true }

@@ -3,6 +3,7 @@ import mongoose, { Model, Schema } from "mongoose";
 import jwt from "jsonwebtoken";
 
 export interface IUser extends Document {
+    id: string;
     name: string;
     email: string;
     role: string;
@@ -10,7 +11,6 @@ export interface IUser extends Document {
     resetPasswordToken: string;
     resetPasswordExpire: Date;
     createAt: Date;
-
 }
 
 export interface IUserModel extends Model<IUser> {

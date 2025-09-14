@@ -19,22 +19,52 @@ const getBootcamp = asyncHandler(async (req: Request, res: Response, next: NextF
 });
 
 const createBootcamp = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+    //Add user to req.body
+    req.body.user = req.user.id;
+
+    //Check for published bootcamp
+    const publishedBootcamp = await Bootcamp.findOne({ user: req.user.id });
+    if (publishedBootcamp && req.user.role !== 'admin') {
+        return next(new ErrorResponse(`The user with ID ${req.user.id} has already published a bootcamp`, 400));
+    }
+
     const bootcamp = await Bootcamp.create(req.body);
     res.status(201).json({ success: true, data: bootcamp });
 });
 
 const updateBootcamp = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
-    const bootcamp = await Bootcamp.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
+    let bootcamp = await Bootcamp.findById(req.params.id);
     if (!bootcamp) {
         return next(new ErrorResponse(`Bootcamp not found with id of ${req.params.id}`, 404));
     }
+
+    const filter = { _id: req.params.id } as any;
+    if (req.user.role !== 'admin')
+        filter.user = req.user.id;
+
+    bootcamp = await Bootcamp.findOneAndUpdate(filter, req.body, { new: true, runValidators: true });
+    if (!bootcamp) {
+        return next(new ErrorResponse(`User ${req.user.id} is not authorized to update this bootcamp`, 401));
+    }
+
+    res.status(200).json({ success: true, data: bootcamp });
 });
 
 const deleteBootcamp = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
-    const bootcamp = await Bootcamp.findByIdAndDelete(req.params.id);
+    let bootcamp = await Bootcamp.findById(req.params.id);
     if (!bootcamp) {
         return next(new ErrorResponse(`Bootcamp not found with id of ${req.params.id}`, 404));
     }
+
+    const filter = { _id: req.params.id } as any;
+    if (req.user.role !== 'admin')
+        filter.user = req.user.id;
+
+    bootcamp = await Bootcamp.findOneAndDelete(filter);
+    if (!bootcamp) {
+        return next(new ErrorResponse(`User ${req.user.id} is not authorized to update this bootcamp`, 401));
+    }
+
     res.status(200).json({ success: true, data: bootcamp });
 });
 

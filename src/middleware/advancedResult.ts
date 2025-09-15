@@ -26,38 +26,46 @@ export const advancedResults = (model: any, populate?: any) => async (req: Reque
         query = query.sort('-createdAt');
     }
 
-    const page = parseInt(req.query.page as string, 10) || 1;
-    const limit = parseInt(req.query.limit as string, 10) || 1;
-    const startIndex = (page - 1) * limit;
-    const endIndex = page * limit;
-    const total = await model.countDocuments(queryParse);
-    query = query.skip(startIndex).limit(limit);
+    //kiem tra nếu có page và limit thì query phân trang không thì get all
+    let pagination = null;
+    if (req.query.page || req.query.limit) {
+        const page = parseInt(req.query.page as string, 10) || 1;
+        const limit = parseInt(req.query.limit as string, 10) || 1;
+        const startIndex = (page - 1) * limit;
+        const endIndex = page * limit;
+        query = query.skip(startIndex).limit(limit);
+
+
+        pagination = { next: null, prev: null };
+        const total = await model.countDocuments(queryParse);
+        if (endIndex < total) {
+            pagination.next = {
+                page: page + 1,
+                limit
+            };
+        }
+
+        if (startIndex > 0) {
+            pagination.prev = {
+                page: page - 1,
+                limit
+            };
+        }
+    }
 
     if (populate) {
         query = query.populate(populate);
-    }
-
-    const pagination = { next: null, prev: null };
-    if (endIndex < total) {
-        pagination.next = {
-            page: page + 1,
-            limit
-        };
-    }
-    if (startIndex > 0) {
-        pagination.prev = {
-            page: page - 1,
-            limit
-        };
     }
 
     const result = await query;
     res.advancedResults = {
         success: true,
         count: result.length,
-        pagination,
         data: result
     };
 
+    if (pagination) {
+        res.advancedResults.pagination = pagination;
+    }
     next();
 };

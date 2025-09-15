@@ -36,6 +36,32 @@ const GetMe = asyncHandler(async (req: Request, res: Response, next: NextFunctio
     res.status(200).json({ success: true, data: user });
 });
 
+const UpdateDetail = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+    const fieldToUpdate = {
+        name: req.body.name,
+        email: req.body.email
+    }
+    const user = await User.findByIdAndUpdate(req.user?.id, fieldToUpdate, { new: true, runValidators: true });
+    res.status(200).json({ success: true, data: user });
+});
+
+const UpdatePassword = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+    const user = await User.findById(req.user?.id).select("+password");
+    if (!user) {
+        return next(new ErrorResponse("User not found", 404));
+    }
+
+    const isMatch = await user.matchPassword(req.body.currentPassword);
+    if (!isMatch) {
+        return next(new ErrorResponse("Current password is incorrect", 401));
+    }
+
+    user.password = req.body.newPassword;
+    await user.save();
+
+    sendTokenResponse(user, 200, res);
+});
+
 const ForgotPassword = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
     const user = await User.findOne({ email: req.body.email });
     if (!user) {
@@ -84,4 +110,6 @@ const sendTokenResponse = (user: any, statusCode: number, res: Response) => {
         .json({ success: true, data: user, token });
 };
 
-export const authController = { Register, Login, GetMe, ForgotPassword };
+export const authController = {
+    Register, Login, GetMe, ForgotPassword, UpdateDetail, UpdatePassword
+};

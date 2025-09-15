@@ -6,7 +6,7 @@ declare global {
             advancedResults?: {
                 success: boolean;
                 count: number;
-                pagination: { next: any; prev: any };
+                pagination?: { next: any; prev: any };
                 data: any;
             };
         }

@@ -3,6 +3,7 @@ import colors from 'colors';
 import bootcamp from './models/bootcamp.ts';
 import course from './models/course.ts';
 import user from './models/user.ts';
+import review from './models/reviews.ts';
 import mongoose from "mongoose";
 import dotenv from 'dotenv';
 
@@ -29,11 +30,15 @@ const courses = JSON.parse(coursesJson);
 const usersJson = fs.readFileSync(new URL('./data/users.json', import.meta.url), 'utf-8');
 const users = JSON.parse(usersJson);
 
+const reviewsJson = fs.readFileSync(new URL('./data/reviews.json', import.meta.url), 'utf-8');
+const reviews = JSON.parse(reviewsJson);
+
 const importData = async () => {
     try {
         await bootcamp.create(bootcamps);
         await course.create(courses);
         await user.create(users);
+        await review.create(reviews);
         console.log(colors.green('Data imported successfully'));
         process.exit();
     } catch (error) {
@@ -46,6 +51,7 @@ const deleteData = async () => {
         await bootcamp.deleteMany();
         await course.deleteMany();
         await user.deleteMany();
+        await review.deleteMany();
         console.log(colors.green('Data deleted successfully'));
         process.exit();
     } catch (error) {

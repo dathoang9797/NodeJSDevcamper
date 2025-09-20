@@ -1,5 +1,4 @@
 import mongoose, { Model, Types } from "mongoose";
-import bootcamp from "./bootcamp.ts";
 
 interface ICourse extends Document {
     title: string;
@@ -69,16 +68,9 @@ CourseSchema.statics.getAverageCost = async function (bootcampId: string) {
     ]);
 
     try {
-        if (obj[0]) {
-            await bootcamp.findByIdAndUpdate(bootcampId, {
-                averageCost: Math.ceil(obj[0].averageCost / 10) * 10
-            });
-        } else {
-            await bootcamp.findByIdAndUpdate(bootcampId, {
-                averageCost: undefined
-            });
-        }
-
+        await mongoose.model("Bootcamp").findByIdAndUpdate(bootcampId, {
+            averageCost: Math.ceil(obj[0].averageCost / 10) * 10
+        });
     }
     catch (err) {
         console.error(err);

@@ -4,6 +4,7 @@ import routerBootcamps from "#src/routers/bootcamps.ts";
 import routerCourses from "#src/routers/courses.ts";
 import routerAuth from "#src/routers/auth.ts";
 import routerUsers from "#src/routers/users.ts";
+import routerReviews from "#src/routers/reviews.ts";
 import morgan from 'morgan';
 import errorHandler from './middleware/error.ts';
 import fileUpload from 'express-fileupload';
@@ -36,6 +37,7 @@ app.use("/api/v1/bootcamps", routerBootcamps);
 app.use("/api/v1/courses", routerCourses);
 app.use("/api/v1/auth", routerAuth);
 app.use("/api/v1/users", routerUsers);
+app.use("/api/v1/reviews", routerReviews);
 app.use(errorHandler);
 
 const server = app.listen(port, () => {

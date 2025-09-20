@@ -12,7 +12,7 @@ export const getReviews = asyncHandler(async (req: Request, res: Response, next:
             success: true,
             count: reviews.length,
             data: reviews
-            
+
         });
     } else {
         return res.status(200).json(res.advancedResults);
@@ -50,11 +50,11 @@ export const updateReview = asyncHandler(async (req: Request, res: Response, nex
         return next(new ErrorResponse(`No review found with id of ${req.params.id}`, 404));
     }
 
-    let filter = { _id: req.params.id } as any;
-    if (req.user.role !== 'admin')
-        filter.user = req.user.id;
+    if (review.user.toString() !== req.user.id && req.user.role !== 'admin') {
+        return next(new ErrorResponse(`User ${req.user.id} is not authorized to update this review`, 401));
+    }
 
-    review = await Review.findOneAndUpdate(filter, req.body, {
+    review = await Review.findOneAndUpdate({ _id: req.params.id }, req.body, {
         new: true,
         runValidators: true
     });
@@ -72,15 +72,11 @@ export const deleteReview = asyncHandler(async (req: Request, res: Response, nex
         return next(new ErrorResponse(`No review found with id of ${req.params.id}`, 404));
     }
 
-    let filter = { _id: req.params.id } as any;
-    if (req.user.role !== 'admin')
-        filter.user = req.user.id;
-
-    const deletedReview = await Review.findOneAndDelete(filter);
-    if (!deletedReview) {
+    if (review.user.toString() !== req.user.id && req.user.role !== 'admin') {
         return next(new ErrorResponse(`User ${req.user.id} is not authorized to delete this review`, 401));
     }
 
+    await review.deleteOne();
     res.status(200).json({ success: true, data: {} });
 });
 

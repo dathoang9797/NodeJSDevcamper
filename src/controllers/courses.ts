@@ -78,11 +78,7 @@ const deleteCourse = asyncHandler(async (req: Request, res: Response, next: Next
     if (req.user.role !== 'admin')
         filter.user = req.user.id;
 
-    const deletedCourse = await Course.findOneAndDelete(filter);
-    if (!deletedCourse) {
-        return next(new ErrorResponse(`User ${req.user.id} is not authorized to delete this course`, 401));
-    }
-
+    await course.deleteOne();
     res.status(200).json({ success: true, data: {} });
 });
 

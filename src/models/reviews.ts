@@ -75,11 +75,8 @@ ReviewSchema.post("save", async function () {
 });
 
 //call getAverageCost before remove
-ReviewSchema.pre("findOneAndDelete", async function () {
-    const bootcampId = this.getFilter().bootcamp;
-    if (bootcampId) {
-        await (this.constructor as IReviewModel).getAverageCost(bootcampId);
-    }
+ReviewSchema.pre("deleteOne", { document: true, query: false }, async function () {
+    await (this.constructor as IReviewModel).getAverageCost(this.bootcamp);
 });
 
 const ReviewModel = mongoose.model<IReview, IReviewModel>("Review", ReviewSchema);

@@ -82,12 +82,9 @@ CourseSchema.post("save", async function () {
     await (this.constructor as ICourseModel).getAverageCost(this.bootcamp);
 });
 
-//call getAverageCost before remove
-CourseSchema.pre("findOneAndDelete", async function () {
-    const bootcampId = this.getFilter().bootcamp;
-    if (bootcampId) {
-        await (this.constructor as ICourseModel).getAverageCost(bootcampId);
-    }
+//call getAverageCost before deleteOne
+CourseSchema.pre("deleteOne", { document: true, query: false }, async function () {
+    await (this.constructor as ICourseModel).getAverageCost(this.bootcamp);
 });
 
 

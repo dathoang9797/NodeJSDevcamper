@@ -9,10 +9,9 @@ const protect = asyncHandler(async (req: Request, res: Response, next: NextFunct
     let token;
     if (req.headers.authorization?.startsWith?.("Bearer")) {
         token = req.headers.authorization.split(" ")[1];
+    } else if (req.cookies.token) {
+        token = req.cookies.token;
     }
-
-    // if(req.cookies.token){
-    // }
 
     // Make sure token exists
     if (!token) {

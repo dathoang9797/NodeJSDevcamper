@@ -4,14 +4,14 @@ import asyncHandler from "#src/middleware/async.ts";
 import { sendEmail } from "#src/utils/sendEmail.ts";
 import type { Request, Response, NextFunction, CookieOptions } from "express";
 
-const Register = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+export const Register = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
     const { name, email, password, role } = req.body;
     const user = await User.create({ name, email, password, role });
     const token = user.getSignedJwtToken();
     res.status(200).json({ success: true, data: user, token });
 });
 
-const Login = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+export const Login = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
     const { email, password } = req.body;
     if (!email || !password) {
         return next(new ErrorResponse("Please provide an email and password", 400));
@@ -31,12 +31,20 @@ const Login = asyncHandler(async (req: Request, res: Response, next: NextFunctio
     sendTokenResponse(user, 200, res);
 });
 
-const GetMe = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+export const Logout = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+    res.cookie("token", "none", {
+        expires: new Date(Date.now() + 10 * 1000),
+        httpOnly: true
+    });
+    res.status(200).json({ success: true, data: {} });
+});
+
+export const GetMe = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
     const user = await User.findById(req.user?.id);
     res.status(200).json({ success: true, data: user });
 });
 
-const UpdateDetail = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+export const UpdateDetail = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
     const fieldToUpdate = {
         name: req.body.name,
         email: req.body.email
@@ -45,7 +53,7 @@ const UpdateDetail = asyncHandler(async (req: Request, res: Response, next: Next
     res.status(200).json({ success: true, data: user });
 });
 
-const UpdatePassword = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+export const UpdatePassword = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
     const user = await User.findById(req.user?.id).select("+password");
     if (!user) {
         return next(new ErrorResponse("User not found", 404));
@@ -62,7 +70,7 @@ const UpdatePassword = asyncHandler(async (req: Request, res: Response, next: Ne
     sendTokenResponse(user, 200, res);
 });
 
-const ForgotPassword = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+export const ForgotPassword = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
     const user = await User.findOne({ email: req.body.email });
     if (!user) {
         return next(new ErrorResponse("There is no user with that email", 404));
@@ -108,8 +116,4 @@ const sendTokenResponse = (user: any, statusCode: number, res: Response) => {
         .status(statusCode)
         .cookie("token", token, options)
         .json({ success: true, data: user, token });
-};
-
-export const authController = {
-    Register, Login, GetMe, ForgotPassword, UpdateDetail, UpdatePassword
 };

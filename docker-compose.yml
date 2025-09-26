@@ -1,4 +1,17 @@
 services:                                  # Nhóm dịch vụ
+  redis:
+      image: redis:7-alpine
+      # Nếu muốn bật password:
+      # command: ["redis-server", "--requirepass", "mysecret"]
+      ports:
+        - "6379:6379"   # tùy, chỉ cần khi muốn truy cập từ host
+      healthcheck:
+        test: ["CMD", "redis-cli", "ping"]
+        interval: 2s
+        timeout: 1s
+        retries: 20
+      
+      
   mongo:                                   # MongoDB
     image: mongo:7                         # Image Mongo v7
     environment:                           # Biến môi trường khởi tạo

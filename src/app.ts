@@ -15,7 +15,7 @@ import morgan from 'morgan';
 import errorHandler from './middleware/error.ts';
 import fileUpload from 'express-fileupload';
 import cookieParser from 'cookie-parser';
-import { getOrSetCache } from './utils/getOrSetCache.ts';
+// import { getOrSetCache } from './utils/getOrSetCache.ts';
 import "#src/config/index.ts";
 
 const app = express();

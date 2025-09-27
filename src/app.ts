@@ -15,7 +15,7 @@ import morgan from 'morgan';
 import errorHandler from './middleware/error.ts';
 import fileUpload from 'express-fileupload';
 import cookieParser from 'cookie-parser';
-// import { getOrSetCache } from './utils/getOrSetCache.ts';
+import { getOrSetCache } from './utils/getOrSetCache.ts';
 import "#src/config/index.ts";
 
 const app = express();
@@ -90,27 +90,27 @@ app.use(cors());
 app.use(cookieParser());
 
 //redis
-// app.get(`/photos`, async (req, res) => {
-//     const photos = await getOrSetCache(`photos`, async () => {
-//         let url = `https://jsonplaceholder.typicode.com/photos`;
-//         const rsp = await fetch(url);
-//         return await rsp.json();
-//     });
-//     return res.status(200).json(photos);
-// });
+app.get(`/photos`, async (req, res) => {
+    const photos = await getOrSetCache(`photos`, async () => {
+        let url = `https://jsonplaceholder.typicode.com/photos`;
+        const rsp = await fetch(url);
+        return await rsp.json();
+    });
+    return res.status(200).json(photos);
+});
 
-// app.get(`/photos/:id`, async (req, res) => {
-//     const albumId = req.query.albumId;
-//     const photos = await getOrSetCache(`photos:${albumId}`, async () => {
-//         let url = `https://jsonplaceholder.typicode.com/photos`;
-//         if (albumId)
-//             url += `?albumId=${albumId}`;
+app.get(`/photos/:id`, async (req, res) => {
+    const albumId = req.query.albumId;
+    const photos = await getOrSetCache(`photos:${albumId}`, async () => {
+        let url = `https://jsonplaceholder.typicode.com/photos`;
+        if (albumId)
+            url += `?albumId=${albumId}`;
 
-//         const rsp = await fetch(url);
-//         return await rsp.json();
-//     });
-//     return res.status(200).json(photos);
-// });
+        const rsp = await fetch(url);
+        return await rsp.json();
+    });
+    return res.status(200).json(photos);
+});
 
 app.use("/api/v1/bootcamps", routerBootcamps);
 app.use("/api/v1/courses", routerCourses);

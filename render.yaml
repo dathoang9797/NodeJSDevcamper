@@ -13,7 +13,7 @@ services:
       - key: PORT
         value: "8080"
       - key: MONGO_URL
-        value: "mmongodb://root:secret@mongo:27017/devcamper?authSource=admin"
+        value: "mongodb+srv://dat97:Dat291097@@cluster0.0rd6dy1.mongodb.net/"
       - key: REDIS_URL
         fromService:
           name: redis-example

@@ -90,6 +90,15 @@ app.use(cors());
 app.use(cookieParser());
 
 //redis
+app.get(`/photos`, async (req, res) => {
+    const photos = await getOrSetCache(`photos`, async () => {
+        let url = `https://jsonplaceholder.typicode.com/photos`;
+        const rsp = await fetch(url);
+        return await rsp.json();
+    });
+    return res.status(200).json(photos);
+});
+
 app.get(`/photos/:id`, async (req, res) => {
     const albumId = req.query.albumId;
     const photos = await getOrSetCache(`photos:${albumId}`, async () => {

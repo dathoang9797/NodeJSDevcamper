@@ -16,7 +16,7 @@ services:
         value: "mmongodb://root:secret@mongo:27017/devcamper?authSource=admin"
       - key: REDIS_URL
         fromService:
-          name: myapi-redis
+          name: redis-example
           type: redis
           property: connectionString
 

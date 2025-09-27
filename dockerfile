@@ -11,3 +11,6 @@ COPY package*.json ./
 RUN npm ci
 COPY  . .
 CMD ["npm","run","dev"]
+
+# Use the desired build stage directly; for example, use 'prod' or 'dev' as needed
+FROM prod AS final

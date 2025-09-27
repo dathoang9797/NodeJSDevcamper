@@ -2,8 +2,24 @@ services:
   - type: web
     name: myapi-web
     env: docker
-    dockerfilePath: ./dockerfile
+    dockerfilePath: ./Dockerfile
     dockerContext: .
-    dockerBuildArgs:
-      - key: TARGET
-        value: prod
+    plan: starter
+    autoDeploy: true
+    region: singapore
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: "8080"
+      - key: MONGO_URL
+        value: "mmongodb://root:secret@mongo:27017/devcamper?authSource=admin"
+      - key: REDIS_URL
+        fromService:
+          name: myapi-redis
+          type: redis
+          property: connectionString
+
+  - type: redis
+    name: myapi-redis
+    ipAllowList: []

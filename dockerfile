@@ -1,16 +1,15 @@
-FROM node:24-alpine AS prod
+FROM node:24-slim  AS prod
+RUN apt-get update && apt-get install -y
 WORKDIR /app
 COPY package*.json ./
 RUN npm ci --omit=dev
 COPY . .
 CMD ["npm","run","build"]
 
-FROM node:24-alpine AS dev
+FROM node:24-slim  AS dev
+RUN apt-get update && apt-get install -y
 WORKDIR /app
 COPY package*.json ./
 RUN npm ci
 COPY  . .
 CMD ["npm","run","dev"]
-
-# Use the desired build stage directly; for example, use 'prod' or 'dev' as needed
-FROM prod AS final

@@ -89,7 +89,6 @@ app.use(cors());
 //Cookie parser
 app.use(cookieParser());
 
-
 //redis
 app.get(`/photos/:id`, async (req, res) => {
     const albumId = req.query.albumId;

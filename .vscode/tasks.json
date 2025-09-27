@@ -4,7 +4,7 @@
     {
       "label": "docker: dev",
       "type": "shell",
-      "command": "docker compose up -d && docker compose logs -f --since=1s --tail=200 api",
+      "command": "docker compose up --build -d && docker compose logs -f --since=1s --tail=200 api",
       "options": {
         "cwd": "${workspaceFolder}"
       },
@@ -19,16 +19,28 @@
           "beginsPattern": ".",
           "endsPattern": ".*"
         }
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated"
       }
     },
     {
       "label": "docker: compose stop",
       "type": "shell",
-      "command": "docker compose stop",
+      "command": "docker",
+      "args": [
+        "compose",
+        "stop"
+      ],
       "options": {
         "cwd": "${workspaceFolder}"
       },
-      "problemMatcher": []
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated"
+      }
     }
   ]
 }

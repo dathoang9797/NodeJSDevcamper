@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: myapi-web
+    env: docker
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    dockerBuildArgs:
+      - key: TARGET
+        value: prod

@@ -14,7 +14,7 @@ services:
       - key: PORT
         value: "8080"                 # app sẽ listen PORT này
       - key: MONGO_URL
-        sync: false                   # điền trong Dashboard: mongodb+srv://... (Atlas)
+        value: mongodb://root:secret@mongo:27017/devcamper?authSource=admin                   # điền trong Dashboard: mongodb+srv://... (Atlas)
       - key: REDIS_URL
         fromService:                  # lấy connection string từ Redis managed
           name: myapi-redis

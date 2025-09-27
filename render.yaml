@@ -1,0 +1,26 @@
+services:
+  - type: web
+    name: myapi-web
+    env: docker
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    plan: starter
+    autoDeploy: true
+    region: singapore
+    healthCheckPath: /healthz
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: "8080"                 # app sẽ listen PORT này
+      - key: MONGO_URL
+        sync: false                   # điền trong Dashboard: mongodb+srv://... (Atlas)
+      - key: REDIS_URL
+        fromService:                  # lấy connection string từ Redis managed
+          name: myapi-redis
+          type: redis
+          property: connectionString
+
+  - type: redis
+    name: myapi-redis
+    ipAllowList: []                   # rỗng = chỉ nội bộ trong Render

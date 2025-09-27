@@ -15,7 +15,7 @@ import morgan from 'morgan';
 import errorHandler from './middleware/error.ts';
 import fileUpload from 'express-fileupload';
 import cookieParser from 'cookie-parser';
-import { createClient } from "redis";
+import { getOrSetCache } from './utils/getOrSetCache.ts';
 import "#src/config/index.ts";
 
 const app = express();
@@ -91,22 +91,17 @@ app.use(cookieParser());
 
 
 //redis
-const urlRedis = process.env.REDIS_URL || "redis://redis:6379";
-const DEFAULT_EXPIRATION = 3600;
-const client = await createClient({
-    url: urlRedis
-}).on("error", (err) => console.log("Redis Client Error", err)).connect();
-
-app.get("/photos", async (req, res) => {
+app.get(`/photos/:id`, async (req, res) => {
     const albumId = req.query.albumId;
-    let url = `https://jsonplaceholder.typicode.com/photos`;
-    if (albumId)
-        url += `?albumId=${albumId}`;
+    const photos = await getOrSetCache(`photos:${albumId}`, async () => {
+        let url = `https://jsonplaceholder.typicode.com/photos`;
+        if (albumId)
+            url += `?albumId=${albumId}`;
 
-    const rsp = await fetch(url);
-    const photos = await rsp.json();
-    client.setEx(`photos`, DEFAULT_EXPIRATION, JSON.stringify(photos));
-    res.status(200).json(photos);
+        const rsp = await fetch(url);
+        return await rsp.json();
+    });
+    return res.status(200).json(photos);
 });
 
 app.use("/api/v1/bootcamps", routerBootcamps);

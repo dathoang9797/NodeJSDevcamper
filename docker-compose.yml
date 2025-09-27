@@ -35,7 +35,7 @@ services:                                  # Nhóm dịch vụ
       - "9229:9229"
     volumes:
       - ./:/app                            # Bind mã nguồn host vào /app (hot-reload)
-    depends_on: [mongo]                    # Khởi động sau mongo (chỉ đảm bảo thứ tự)
+    depends_on: [mongo, redis]             # Khởi động sau mongo (chỉ đảm bảo thứ tự)
     command: npm run dev                   # Lệnh chạy dev (ví dụ nodemon)
     restart: unless-stopped
 

@@ -4,7 +4,7 @@
   "description": "",
   "main": "app.ts",
   "scripts": {
-    "start": "node src/app.ts",
+    "build": "node src/app.ts",
     "dev": "node --watch-path=src --inspect=0.0.0.0:9229 src/app.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

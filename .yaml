@@ -2,7 +2,7 @@ services:
   - type: web
     name: myapi-web
     env: docker
-    dockerfilePath: ./Dockerfile
+    dockerfilePath: ./dockerfile
     dockerContext: .
     dockerBuildArgs:
       - key: TARGET
